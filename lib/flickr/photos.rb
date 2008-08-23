@@ -206,6 +206,48 @@ class Flickr::Photos < Flickr::Base
     end
   end
   
+  def interesting(options)
+    options.merge!({:extras => "license,date_upload,date_taken,owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,o_dims,views,media"})
+
+    rsp = @flickr.send_request('flickr.interestingness.getList', options)
+
+    returning PhotoResponse.new(:page => rsp.photos[:page].to_i,
+                                :pages => rsp.photos[:pages].to_i,
+                                :per_page => rsp.photos[:perpage].to_i,
+                                :total => rsp.photos[:total].to_i,
+                                :photos => [],
+                                :api => self,
+                                :method => 'flickr.interestingness.getList',
+                                :options => options) do |photos|
+      rsp.photos.photo.each do |photo|
+        attributes = {:id => photo[:id], 
+                      :owner => photo[:owner], 
+                      :secret => photo[:secret], 
+                      :server => photo[:server], 
+                      :farm => photo[:farm], 
+                      :title => photo[:title], 
+                      :is_public => photo[:ispublic], 
+                      :is_friend => photo[:isfriend], 
+                      :is_family => photo[:isfamily],
+                      :license_id => photo[:license].to_i,
+                      :uploaded_at => (Time.at(photo[:dateupload].to_i) rescue nil),
+                      :taken_at => (Time.parse(photo[:datetaken]) rescue nil),
+                      :owner_name => photo[:ownername],
+                      :icon_server => photo[:icon_server],
+                      :original_format => photo[:originalformat],
+                      :updated_at => (Time.at(photo[:lastupdate].to_i) rescue nil),
+                      :geo => photo[:geo],
+                      :tags => photo[:tags],
+                      :machine_tags => photo[:machine_tags],
+                      :o_dims => photo[:o_dims],
+                      :views => photo[:views].to_i,
+                      :media => photo[:media]}
+
+        photos << Photo.new(@flickr, attributes)
+      end if rsp.photos.photo
+    end
+  end
+  
   def licenses
     @licenses ||= get_licenses
   end
