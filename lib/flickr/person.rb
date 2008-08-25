@@ -17,6 +17,14 @@ class Flickr::People::Person
     end
   end
   
+  def buddy_icon
+    @buddy_icon ||= if icon_server.to_i > 0
+                      "http://farm#{icon_farm}.static.flickr.com/#{icon_server}/buddyicons/#{nsid}.jpg"
+                    else
+                      'http://www.flickr.com/images/buddyicon.jpg'
+                    end
+  end
+  
   # Get a list of public photos for the given user.
   # 
   # Options
