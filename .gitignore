@@ -1,6 +1,7 @@
 rdoc
 .DS_Store
 *.yml
+*.gem
 demo.rb
 *~
 *.sw*
