@@ -1,15 +1,14 @@
 Gem::Specification.new do |s|
   s.name     = "flickr_fu"
   s.version  = "0.1.6"
-  s.date     = "2008-08-11"
+  s.date     = "2008-09-12"
   s.summary  = "Provides a ruby interface to flickr via the REST api"
-  s.email    = "github@thewebfellas.com"
-  s.homepage = "http://github.com/thewebfellas/flickr_fu"
+  s.email    = "ben@commonthread.com"
+  s.homepage = "http://github.com/commonthread/flickr_fu"
   s.description = "Provides a ruby interface to flickr via the REST api"
   s.has_rdoc = true
   s.authors  = ["Ben Wyrosdick"]
-  s.files    = [
-    "README",
+  s.files    = ["README",
 		"LICENSE",
 		"Rakefile",
 		"flickr_fu.gemspec",
@@ -32,4 +31,5 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--main", "README"]
   s.extra_rdoc_files = ["README"]
   s.add_dependency("mime-types", ["> 0.0.0"])
+  s.add_dependency("xml-magic", ["> 0.0.0"])
 end
