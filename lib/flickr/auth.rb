@@ -7,6 +7,11 @@ class Flickr::Auth < Flickr::Base
   def frob
     @frob ||= get_frob
   end
+  
+  # set the frob
+  def frob= frob
+    @frob=frob
+  end
 
   # generates the authorization url to allow access to a flickr account.
   # 
