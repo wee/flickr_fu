@@ -63,7 +63,9 @@ class Flickr::Auth < Flickr::Base
   end
 
   def get_token(pass_through)
-    if @flickr.token_cache and File.exists?(@flickr.token_cache)
+    if @flickr.token
+      @flickr.token
+    elsif @flickr.token_cache and File.exists?(@flickr.token_cache)
       YAML.load_file(@flickr.token_cache)
     elsif pass_through
       rsp = @flickr.send_request('flickr.auth.getToken', {:frob => self.frob})
