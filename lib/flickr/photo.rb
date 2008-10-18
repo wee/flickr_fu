@@ -4,7 +4,6 @@ class Flickr::Photos::Photo
   attr_accessor :id, :owner, :secret, :server, :farm, :title, :is_public, :is_friend, :is_family # standard attributes
   attr_accessor :license_id, :uploaded_at, :taken_at, :owner_name, :icon_server, :original_format, :updated_at, :geo, :tags, :machine_tags, :o_dims, :views, :media # extra attributes
   attr_accessor :info_added, :description, :original_secret, :owner_username, :owner_realname, :url_photopage, :notes # info attributes
-  attr_accessor :sizes_added, :sizes, :url_square, :url_thumbnail, :url_small, :url_medium, :url_large, :url_original # size attributes
   attr_accessor :comments_added, :comments # comment attributes
   
   # create a new instance of a flickr photo.
@@ -34,8 +33,7 @@ class Flickr::Photos::Photo
   #       :original - original image, either a jpg, gif or png, depending on source format
   # 
   def url(size = :medium)
-    attach_sizes
-    send("url_#{size}")
+    size_hash[size.to_s].source if size_hash.has_key? size.to_s
   end
 
   # save the current photo to the local computer
@@ -165,8 +163,16 @@ class Flickr::Photos::Photo
   end
   
   def sizes # :nodoc:
-    attach_sizes
-    @sizes
+    @sizes ||= begin
+      rsp = @flickr.send_request('flickr.photos.getSizes', :photo_id => self.id)
+      
+      _sizes = []
+      rsp.sizes.size.each do |size|
+        _sizes << Flickr::Photos::Size.new(:label => size[:label], :width => size[:width],
+          :height => size[:height], :source => size[:source], :url => size[:url])
+      end
+      _sizes
+    end
   end
 
   def notes # :nodoc:
@@ -175,34 +181,14 @@ class Flickr::Photos::Photo
   end
 
   protected
-  def url_square # :nodoc:
-    attach_sizes
-    @url_square
-  end
-
-  def url_thumbnail # :nodoc:
-    attach_sizes
-    @url_thumbnail
-  end
-
-  def url_small # :nodoc:
-    attach_sizes
-    @url_small
-  end
-
-  def url_medium # :nodoc:
-    attach_sizes
-    @url_medium
-  end
-
-  def url_large # :nodoc:
-    attach_sizes
-    @url_large
-  end
-
-  def url_original # :nodoc:
-    attach_sizes
-    @url_original
+  def size_hash
+    @size_hash ||= begin
+      hash = {}
+      sizes.each do |size|
+        hash[size.label.downcase] = size
+      end
+      hash
+    end
   end
 
   private
@@ -246,31 +232,6 @@ class Flickr::Photos::Photo
                                :width => note[:w],
                                :height => note[:h])
       end if rsp.photo.notes.note
-    end
-  end
-
-  # loads picture sizes only after one has been requested
-  def attach_sizes
-    unless self.sizes_added
-      rsp = @flickr.send_request('flickr.photos.getSizes', :photo_id => self.id)
-
-      self.sizes_added = true
-      self.sizes = []
-
-      # TODO: investigate the new video features and integrate better
-      rsp.sizes.size.each do |size|
-        method = "url_#{size[:label].downcase}="
-        next unless respond_to? method
-        send(method, size[:source])
-        
-        # send("url_#{size[:label].downcase}=", size[:source])
-
-        self.sizes << Flickr::Photos::Size.new(:label => size[:label],
-                               :width => size[:width],
-                               :height => size[:height],
-                               :source => size[:source],
-                               :url => size[:url])
-      end
     end
   end
 
