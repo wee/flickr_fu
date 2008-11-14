@@ -49,7 +49,7 @@ module Flickr
       end
     end
 
-    # sends a request to the flcikr REST api
+    # sends a request to the flickr REST api
     # 
     # Params
     # * method (Required)
