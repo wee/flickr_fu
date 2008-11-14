@@ -23,6 +23,12 @@
 
   http://www.commonthread.com/projects/flickr_fu/rdoc/
 
+== Example flickr.yml
+--- !map:HashWithIndifferentAccess
+key: "YOUR KEY"
+secret: "YOUR SECRET"
+token_cache: "token_cache.yml"
+
 == Authorization
 
   To authorise your application to access Flickr using your API key you will
@@ -31,6 +37,12 @@
   To generate this URL run the following and when presented with the URL 
   access it from your browser. Confirm the application has permission at 
   the level you have specified.
+  
+  Note that flickr has different types of keys. If you use one for a webapplication,
+  which is most likely, you need to define a callback and somehow make sure that
+  you connect the parameter :frob that flickr send via the callback is assigned
+  to the right user account. The best way to do this is to loop over all the current
+  user's flickr accounts and try flickr.auth.token with the :frob.
   
   Finally, cache the token (this will create the token cache file)
   
@@ -44,7 +56,7 @@
   "98: Login failed / Invalid auth token" or 
   "99: User not logged in / Insufficient permissions"
   
-== Authorization Example
+== Authorization Example for non-webapplication
 
   require 'flickr_fu'
   
@@ -58,6 +70,28 @@
   gets
   
   flickr.auth.cache_token
+
+== Authorization Example for a webapplication
+
+  flickr.auth.token also contains the nsid and username, this
+  example only stores the token and no other userdata.
+
+  require 'flickr_fu'
+  class FlickrController < ActionController::Base
+    def create
+      flickr = Flickr.new('flickr.yml')
+      redirect_to flickr.auth.url(:write)
+    end
+    def flickr_callback
+      flickr = Flickr.new('flickr.yml')
+      flickr.auth.frob = params[:frob]
+      current_user.update_attribute :flickr_token, flickr.auth.token.token
+    end
+    def something_else_with_flickr
+      flickr = Flickr.new(YAML.load_file('flickr.yml').merge(:token => current_user.flickr_token))
+      # now you have full access on the user's data :)
+    end
+  end
 
 == Search Example
 
