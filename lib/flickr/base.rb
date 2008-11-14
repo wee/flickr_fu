@@ -14,9 +14,9 @@ module Flickr
     # 
     # You can either pass a hash with the following attributes:
     # 
-    # * :api_key (Required)
+    # * :key (Required)
     #     the API key
-    # * :api_secret (Required)
+    # * :secret (Required)
     #     the API secret
     # * :token (Optional)
     #     Flickr::Auth::Token object
@@ -35,8 +35,8 @@ module Flickr
     # 
     def initialize(config_hash_or_file, token_cache = nil)
       if config_hash_or_file.is_a? Hash
-        @api_key = config_hash_or_file[:api_key]
-        @api_secret = config_hash_or_file[:api_secret]
+        @api_key = config_hash_or_file[:key]
+        @api_secret = config_hash_or_file[:secret]
         @token = config_hash_or_file[:token]
         raise 'config_hash must contain api key and secret' unless @api_key and @api_secret
       else 
