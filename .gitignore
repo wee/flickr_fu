@@ -5,4 +5,4 @@ rdoc
 demo.rb
 *~
 *.sw*
-
+.specification
