@@ -197,12 +197,12 @@ class Flickr::Photos::Photo
   # convert the size to the key used in the flickr url
   def size_key(size)
     case size.to_sym
-    when :square : 's'
-    when :thumb, :thumbnail : 't'
-    when :small : 'm'
-    when :medium : '-'
-    when :large : 'b'
-    when :original : 'o'
+    when :square then 's'
+    when :thumb, :thumbnail then 't'
+    when :small then 'm'
+    when :medium then '-'
+    when :large then 'b'
+    when :original then 'o'
     else ''
     end
   end
