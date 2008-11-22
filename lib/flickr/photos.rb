@@ -198,6 +198,16 @@ class Flickr::Photos < Flickr::Base
     end
   end
   
+  # Returns a Flickr::Photos::Photo object of the given id.
+  # Raises an error if photo not found
+  def find_by_id(photo_id)
+    rsp = @flickr.send_request('flickr.photos.getInfo', :photo_id => photo_id)
+    Photo.new(@flickr, :id => rsp.photo[:id].to_i, :owner => rsp.photo.owner,
+      :secret => rsp.photo[:secret], :server => rsp.photo[:server].to_i, :farm => rsp.photo[:farm], 
+      :title => rsp.photo.title,
+      :is_public => rsp.photo.visibility[:public], :is_friend => rsp.photo.visibility[:is_friend], :is_family => rsp.photo.visibility[:is_family])
+  end
+  
   protected
   def create_attributes(photo)
     {:id => photo[:id], 

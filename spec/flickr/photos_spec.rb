@@ -31,4 +31,20 @@ describe Flickr::Photos do
       @flickr.photos.licenses
     end
   end
+  
+  describe ".find_by_id" do
+    it "should return a photo when a valid id is given" do
+      photo_id = 2984637736
+      #photo_upload_date = 1225297614
+      info_xml = File.read(File.dirname(__FILE__) + "/../fixtures/flickr/photos/get_info-0.xml")
+      @flickr.should_receive(:request_over_http).and_return(info_xml)
+      
+      photo = @flickr.photos.find_by_id(photo_id)
+      photo.id.should == photo_id
+    end
+    
+    it "should raise an error when no id is given"
+    
+    it "should raise an error when the photo does not exist"
+  end
 end
