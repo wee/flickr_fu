@@ -75,7 +75,7 @@ module Flickr
       if xm[:stat] == 'ok'
         xm
       else
-        raise "#{xm.err[:code]}: #{xm.err[:msg]}"
+        raise Flickr::Errors.error_for(xm.err[:code], xm.err[:msg])
       end
     end
     
