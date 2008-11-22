@@ -6,3 +6,4 @@ demo.rb
 *~
 *.sw*
 .specification
+nbproject/
