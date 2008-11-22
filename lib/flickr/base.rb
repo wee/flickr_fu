@@ -67,12 +67,7 @@ module Flickr
       options.merge!(:api_key => @api_key, :method => method)
       sign_request(options)
       
-      if http_method == :get
-        api_call = endpoint + "?" + options.collect{|k,v| "#{k}=#{CGI.escape(v.to_s)}"}.join('&')
-        rsp = Net::HTTP.get(URI.parse(api_call))
-      else
-        rsp = Net::HTTP.post_form(URI.parse(endpoint), options).body
-      end
+      rsp = request_over_http(options, http_method, endpoint)
       
       rsp = '<rsp stat="ok"></rsp>' if rsp == ""
       xm = XmlMagic.new(rsp)
@@ -112,5 +107,18 @@ module Flickr
       
     # creates and/or returns the Flickr::Uploader object
     def uploader() @uploader ||= Flickr::Uploader.new(self) end
+    
+    protected
+    
+    # For easier testing. You can mock this method with a XML file you're expecting to receive
+    def request_over_http(options, http_method, endpoint)
+      if http_method == :get
+        api_call = endpoint + "?" + options.collect{|k,v| "#{k}=#{CGI.escape(v.to_s)}"}.join('&')
+        Net::HTTP.get(URI.parse(api_call))
+      else
+        Net::HTTP.post_form(URI.parse(endpoint), options).body
+      end
+    end
+    
   end
 end
