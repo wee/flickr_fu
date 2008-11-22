@@ -7,3 +7,4 @@ demo.rb
 *.sw*
 .specification
 nbproject/
+doc/rspec_report.html
