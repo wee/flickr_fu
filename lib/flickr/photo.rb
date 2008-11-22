@@ -158,8 +158,26 @@ class Flickr::Photos::Photo
   end
 
   def comments # :nodoc:
-    attach_comments
-    @comments
+    @comments ||= begin
+      if @comment_count == 0
+        self.comments = []
+        self.comments_added = true
+      elsif not self.comments_added
+        rsp = @flickr.send_request('flickr.photos.comments.getList', :photo_id => self.id)
+        
+        self.comments = []
+        self.comments_added = true
+        
+        rsp.comments.comment.each do |comment|
+          self.comments << Flickr::Photos::Comment.new(:id => comment[:id],
+            :comment => comment.to_s,
+            :author => comment[:author],
+            :author_name => comment[:authorname],
+            :permalink => comment[:permalink],
+            :created_at => (Time.at(comment[:datecreate].to_i) rescue nil))
+        end
+      end        
+    end
   end
   
   def sizes # :nodoc:
@@ -233,27 +251,5 @@ class Flickr::Photos::Photo
                                :height => note[:h])
       end if rsp.photo.notes.note
     end
-  end
-
-  # loads comments once they have been requested
-  def attach_comments
-    if @comment_count == 0
-      self.comments = []
-      self.comments_added = true
-    elsif not self.comments_added
-      rsp = @flickr.send_request('flickr.photos.comments.getList', :photo_id => self.id)
-
-      self.comments = []
-      self.comments_added = true
-
-      rsp.comments.comment.each do |comment|
-        self.comments << Flickr::Photos::Comment.new(:id => comment[:id],
-                                     :comment => comment.to_s,
-                                     :author => comment[:author],
-                                     :author_name => comment[:authorname],
-                                     :permalink => comment[:permalink],
-                                     :created_at => (Time.at(comment[:datecreate].to_i) rescue nil))
-      end
-    end        
   end
 end
