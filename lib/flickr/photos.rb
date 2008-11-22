@@ -187,7 +187,15 @@ class Flickr::Photos < Flickr::Base
   end
   
   def licenses
-    @licenses ||= get_licenses
+    @licenses ||= begin
+      rsp = @flickr.send_request('flickr.photos.licenses.getInfo')
+      
+      returning Hash.new do |licenses|
+        rsp.licenses.license.each do |license|
+          licenses[license[:id].to_i] = Flickr::Photos::License.new(:id => license[:id].to_i, :name => license[:name], :url => license[:url])
+        end
+      end
+    end
   end
   
   protected
@@ -216,13 +224,4 @@ class Flickr::Photos < Flickr::Base
      :media => photo[:media]}
   end
   
-  def get_licenses
-    rsp = @flickr.send_request('flickr.photos.licenses.getInfo')
-    
-    returning Hash.new do |licenses|
-      rsp.licenses.license.each do |license|
-        licenses[license[:id].to_i] = Flickr::Photos::License.new(:id => license[:id].to_i, :name => license[:name], :url => license[:url])
-      end
-    end
-  end
 end
