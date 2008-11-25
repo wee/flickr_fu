@@ -34,3 +34,8 @@ Spec::Rake::SpecTask.new do |t|
   t.spec_opts = ['--options', "spec/spec.opts"]
   t.spec_files = FileList['spec/**/*_spec.rb']
 end
+
+desc "Run rcov"
+task :rcov do
+  system "rcov spec/**/*.rb -x /var/lib -x spec/"
+end
