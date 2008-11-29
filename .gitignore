@@ -8,3 +8,4 @@ demo.rb
 .specification
 nbproject/
 doc/rspec_report.html
+coverage/
