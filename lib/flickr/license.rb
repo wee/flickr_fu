@@ -11,4 +11,14 @@ class Flickr::Photos::License
       send("#{k}=", v)
     end
   end
+  
+  def == o
+    return false unless o.respond_to?(:id) && o.respond_to?(:name) && o.respond_to?(:url)
+    return true if id == o.id && name == o.name && url == o.url
+    false
+  end
+  
+  def eql? o
+    return self == o
+  end
 end

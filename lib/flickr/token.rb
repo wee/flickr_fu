@@ -10,7 +10,7 @@ class Flickr::Auth::Token
   #     a hash of attributes used to set the initial values of the token object
   def initialize(attributes)
     attributes.each do |k,v|
-      send("#{k}=", v)
+      send("#{k}=", v) if respond_to?("#{k}=")
     end
   end
 

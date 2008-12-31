@@ -4,7 +4,7 @@ module Flickr
   end
   
   class Base
-    attr_reader :api_key, :api_secret, :token_cache
+    attr_reader :api_key, :api_secret, :token_cache, :token
     
     REST_ENDPOINT = 'http://api.flickr.com/services/rest/'
     AUTH_ENDPOINT = 'http://flickr.com/services/auth/'
@@ -12,30 +12,44 @@ module Flickr
     
     # create a new flickr object
     # 
-    # Params
+    # You can either pass a hash with the following attributes:
+    # 
+    # * :key (Required)
+    #     the API key
+    # * :secret (Required)
+    #     the API secret
+    # * :token (Optional)
+    #     Flickr::Auth::Token object
+    #
+    # or:
     # * config_file (Required)
     #     yaml file to load configuration from
     # * token_cache (Optional)
     #     location of the token cache file. This will override the setting in the config file
     # 
     # Config Example (yaml file)
-    # 
     # ---
     # key: YOUR_API_KEY
     # secret: YOUR_API_SECRET
     # token_cache: token.yml
     # 
-    def initialize(config_file, token_cache = nil)
-      config = YAML.load_file(config_file)
+    def initialize(config_hash_or_file, token_cache = nil)
+      if config_hash_or_file.is_a? Hash
+        @api_key = config_hash_or_file[:key]
+        @api_secret = config_hash_or_file[:secret]
+        @token = config_hash_or_file[:token]
+        raise 'config_hash must contain api key and secret' unless @api_key and @api_secret
+      else 
+        config = YAML.load_file(config_hash_or_file)
       
-      @api_key = config['key']
-      @api_secret = config['secret']
-      @token_cache = token_cache || config['token_cache']
-      
-      raise 'flickr config file must contain an api key and secret' unless @api_key and @api_secret
+        @api_key = config['key']
+        @api_secret = config['secret']
+        @token_cache = token_cache || config['token_cache']
+        raise 'flickr config file must contain an api key and secret' unless @api_key and @api_secret
+      end
     end
 
-    # sends a request to the flcikr REST api
+    # sends a request to the flickr REST api
     # 
     # Params
     # * method (Required)
@@ -53,12 +67,7 @@ module Flickr
       options.merge!(:api_key => @api_key, :method => method)
       sign_request(options)
       
-      if http_method == :get
-        api_call = endpoint + "?" + options.collect{|k,v| "#{k}=#{CGI.escape(v.to_s)}"}.join('&')
-        rsp = Net::HTTP.get(URI.parse(api_call))
-      else
-        rsp = Net::HTTP.post_form(URI.parse(endpoint), options).body
-      end
+      rsp = request_over_http(options, http_method, endpoint)
       
       rsp = '<rsp stat="ok"></rsp>' if rsp == ""
       xm = XmlMagic.new(rsp)
@@ -66,7 +75,7 @@ module Flickr
       if xm[:stat] == 'ok'
         xm
       else
-        raise "#{xm.err[:code]}: #{xm.err[:msg]}"
+        raise Flickr::Errors.error_for(xm.err[:code], xm.err[:msg])
       end
     end
     
@@ -98,5 +107,18 @@ module Flickr
       
     # creates and/or returns the Flickr::Uploader object
     def uploader() @uploader ||= Flickr::Uploader.new(self) end
+    
+    protected
+    
+    # For easier testing. You can mock this method with a XML file you're expecting to receive
+    def request_over_http(options, http_method, endpoint)
+      if http_method == :get
+        api_call = endpoint + "?" + options.collect{|k,v| "#{k}=#{CGI.escape(v.to_s)}"}.join('&')
+        Net::HTTP.get(URI.parse(api_call))
+      else
+        Net::HTTP.post_form(URI.parse(endpoint), options).body
+      end
+    end
+    
   end
 end
