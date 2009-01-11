@@ -186,12 +186,10 @@ class Flickr::Photos::Photo
     @comments ||= begin
       if @comment_count == 0
         self.comments = []
-        self.comments_added = true
-      elsif not self.comments_added
+      else
         rsp = @flickr.send_request('flickr.photos.comments.getList', :photo_id => self.id)
         
         self.comments = []
-        self.comments_added = true
         
         rsp.comments.comment.each do |comment|
           self.comments << Flickr::Photos::Comment.new(:id => comment[:id],
@@ -201,7 +199,9 @@ class Flickr::Photos::Photo
             :permalink => comment[:permalink],
             :created_at => (Time.at(comment[:datecreate].to_i) rescue nil))
         end
-      end        
+      end
+
+      self.comments
     end
   end
   
