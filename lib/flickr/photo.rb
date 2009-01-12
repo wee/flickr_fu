@@ -76,7 +76,7 @@ class Flickr::Photos::Photo
   #       :original - original image, either a jpg, gif or png, depending on source format
   # 
   def save_as(filename, size = :medium)
-    format = size.to_sym == :original ? self.original_format : 'jpg'
+    format = size.to_sym == :original ? (self.original_format || 'jpg') : 'jpg'
     filename = "#{filename}.#{format}"
 
     if File.exists?(filename) or not self.url(size)
