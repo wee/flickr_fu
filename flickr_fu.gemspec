@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name     = "flickr_fu"
-  s.version  = "0.2.1"
+  s.version  = "0.2.2"
   s.date     = "2008-12-30"
   s.summary  = "Provides a ruby interface to flickr via the REST api"
   s.email    = "ben@commonthread.com"
