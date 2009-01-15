@@ -107,7 +107,10 @@ module Flickr
       
     # creates and/or returns the Flickr::Uploader object
     def uploader() @uploader ||= Flickr::Uploader.new(self) end
-    
+
+    # creates and/or returns the Flickr::Contacts object
+    def contacts() @contacts ||= Flickr::Contacts.new(self) end
+            
     protected
     
     # For easier testing. You can mock this method with a XML file you're expecting to receive
