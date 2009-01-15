@@ -11,7 +11,7 @@ require 'time'
 require 'date'
 
 # base must load first
-%w(base test auth token photos photo photo_response comment note size uploader status people person license errors).each do |file|
+%w(base test auth token photos photo photo_response comment note size uploader status people person license errors contacts contact).each do |file|
   require File.join(File.dirname(__FILE__), 'flickr', file)
 end
 
