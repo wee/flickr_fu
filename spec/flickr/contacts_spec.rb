@@ -38,6 +38,8 @@ describe Flickr::Contacts do
     end
     
     it "should raise flickr error 99: Insufficient permissions" do
+      xml = File.read(File.dirname(__FILE__) + "/../fixtures/flickr/contacts/get_list-fail-99.xml")
+      @flickr.stub!(:request_over_http).and_return(xml)
       lambda { @flickr.contacts.get_list }.should raise_error(Flickr::Error, /^99:/)
     end
   end
