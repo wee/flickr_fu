@@ -27,6 +27,7 @@ class Flickr::Contacts < Flickr::Base
   protected
   def collect_contacts(rsp)
     contacts = []
+    return contacts unless rsp
     if rsp.contacts.contact
       rsp.contacts.contact.each do |contact|
         attributes = create_attributes(contact)
