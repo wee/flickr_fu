@@ -75,6 +75,7 @@ describe Flickr::Photos::Photo do
 
   describe ".video_url" do
     it "should return nil, since it's not a video" do
+      @flickr.should_receive(:request_over_http).and_return(@sizes_xml)
       @photo.video_url.should == nil
     end
   end
