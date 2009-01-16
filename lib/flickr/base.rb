@@ -110,6 +110,9 @@ module Flickr
 
     # creates and/or returns the Flickr::Contacts object
     def contacts() @contacts ||= Flickr::Contacts.new(self) end
+
+    # creates and/or returns the Flickr::Urls object
+    def urls() @urls ||= Flickr::Urls.new(self) end
             
     protected
     
