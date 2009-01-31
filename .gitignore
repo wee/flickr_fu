@@ -8,6 +8,6 @@ demo*
 .specification
 nbproject/
 doc/rspec_report.html
-doc/rpsec_profile.txt
+doc/rspec_profile.txt
 spec/spec.local.opts
 coverage/
