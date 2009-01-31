@@ -201,6 +201,11 @@ class Flickr::Photos < Flickr::Base
       end
     end
   end
+
+  # creates and/or returns the Flickr::Photos::Geo object
+  def geo
+    @geo ||= Flickr::Photos::Geo.new(@flickr)
+  end
   
   # Returns a Flickr::Photos::Photo object of the given id.
   # Raises an error if photo not found

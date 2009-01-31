@@ -146,6 +146,22 @@ class Flickr::Photos::Photo
   def license
     @flickr.photos.licenses[self.license_id]
   end
+
+  # Returns the location of the photo (if available)
+  # or nil if photo is not geo-tagged.
+  def location
+    begin
+      @location ||= @flickr.photos.geo.get_location(self.id)
+    rescue Flickr::Error => e
+      if e.code == 2 # 2: Photo has no location information.
+        return nil
+      else
+        raise e
+      end
+    end
+  end
+
+  # TODO add support for location=
   
   # Sets the license for a photo.
   # 

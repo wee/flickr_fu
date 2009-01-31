@@ -80,27 +80,44 @@ describe Flickr::Photos::Photo do
     end
   end
 
-end
+  describe ".location" do
+    it "should return the picture location as specified in flickr.photos.geo.getLocation" do
+      location_xml = File.read(File.dirname(__FILE__) + "/../fixtures/flickr/photos/geo/get_location-0.xml")
+      @flickr.should_receive(:request_over_http).twice.and_return(location_xml)
+      expected_loc = @flickr.photos.geo.get_location(@photo.id)
+      acctual_loc = @photo.location
+      # Checking by latitude and longitude is enough for us
+      acctual_loc.latitude.should == expected_loc.latitude
+      acctual_loc.longitude.should == expected_loc.longitude
+    end
 
-describe Flickr::Photos::Photo, "but it's really a video" do
-
-  include PhotoSpecHelper
-  
-  before :all do
-    @info_xml = File.read(File.dirname(__FILE__) + "/../fixtures/flickr/videos/get_info-0.xml")
-    @sizes_xml = File.read(File.dirname(__FILE__) + "/../fixtures/flickr/videos/get_sizes-0.xml")
+    it "should return nil if picture is not geo-tagged" do
+      no_location_xml = File.read(File.dirname(__FILE__) + "/../fixtures/flickr/photos/geo/get_location-fail-2.xml")
+      @flickr.should_receive(:request_over_http).and_return(no_location_xml)
+      @photo.location.should be_nil
+    end
   end
-  
-  before :each do
-    @flickr = SpecHelper.flickr
-    #@flickr.stub!(:request_over_http).and_return(info_xml)
-    @photo = Flickr::Photos::Photo.new(@flickr, valid_photo_attributes)
-  end
 
-  describe ".video_url" do
-    it "should return something sane" do
-      @flickr.should_receive(:request_over_http).and_return(@sizes_xml)
-      @photo.video_url.should == "http://www.flickr.com/apps/video/stewart.swf?v=63881&photo_id=2729556270&photo_secret=eee23fb14a"
+  describe Flickr::Photos::Photo, "but it's really a video" do
+
+    include PhotoSpecHelper
+  
+    before :all do
+      @info_xml = File.read(File.dirname(__FILE__) + "/../fixtures/flickr/videos/get_info-0.xml")
+      @sizes_xml = File.read(File.dirname(__FILE__) + "/../fixtures/flickr/videos/get_sizes-0.xml")
+    end
+  
+    before :each do
+      @flickr = SpecHelper.flickr
+      #@flickr.stub!(:request_over_http).and_return(info_xml)
+      @photo = Flickr::Photos::Photo.new(@flickr, valid_photo_attributes)
+    end
+
+    describe ".video_url" do
+      it "should return something sane" do
+        @flickr.should_receive(:request_over_http).and_return(@sizes_xml)
+        @photo.video_url.should == "http://www.flickr.com/apps/video/stewart.swf?v=63881&photo_id=2729556270&photo_secret=eee23fb14a"
+      end
     end
   end
 end
