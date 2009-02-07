@@ -161,7 +161,10 @@ class Flickr::Photos::Photo
     end
   end
 
-  # TODO add support for location=
+  def location= location
+    @flickr.photos.geo.set_location(self.id, location.latitude, location.longitude, location.accuracy)
+    @location = location
+  end
   
   # Sets the license for a photo.
   # 
