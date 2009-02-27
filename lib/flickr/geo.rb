@@ -33,4 +33,10 @@ class Flickr::Photos::Geo < Flickr::Base
     @flickr.send_request('flickr.photos.geo.setLocation', request_options, :post)
     true
   end
+
+  def remove_location(photo_id)
+    request_options = {:photo_id => photo_id}
+    @flickr.send_request('flickr.photos.geo.removeLocation', request_options, :post)
+    true
+  end
 end

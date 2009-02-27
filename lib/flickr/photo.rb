@@ -162,7 +162,11 @@ class Flickr::Photos::Photo
   end
 
   def location= location
-    @flickr.photos.geo.set_location(self.id, location.latitude, location.longitude, location.accuracy)
+    if !location.nil?
+      @flickr.photos.geo.set_location(self.id, location.latitude, location.longitude, location.accuracy)
+    else
+      @flickr.photos.geo.remove_location(self.id)
+    end
     @location = location
   end
   
