@@ -11,7 +11,29 @@ require 'time'
 require 'date'
 
 # base must load first
-%w(base test auth token photos photo photo_response photosets photoset comment note size uploader status people person license errors contacts contact geo location urls).each do |file|
+[ "base",
+  "test",
+  "auth",
+  "token",
+  "photos",
+  "photo",
+  "photo_response",
+  "photosets",
+  "photoset",
+  "comment",
+  "note",
+  "size",
+  "uploader",
+  "status",
+  "people",
+  "person",
+  "license",
+  "errors",
+  "contacts",
+  "contact",
+  "geo",
+  "location",
+  "urls" ].each do |file|
   require File.join(File.dirname(__FILE__), 'flickr', file)
 end
 
