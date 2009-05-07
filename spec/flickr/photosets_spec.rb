@@ -24,6 +24,7 @@ describe Flickr::Photosets do
       photosets = @flickr.photosets.get_list
       
       photosets[0].should be_an_instance_of(Flickr::Photosets::Photoset)      
+      photosets[0].title.should == 'Test'
     end
   end
   
@@ -33,7 +34,7 @@ describe Flickr::Photosets do
     end
     
     it "should call flickr.photosets.getPhotos" do
-      @flickr.should_receive(:send_request).with("flickr.photosets.getPhotos",{})       
+      @flickr.should_receive(:send_request).with("flickr.photosets.getPhotos",{:photoset_id=>4})       
       @photoset.get_photos
     end
     
@@ -42,7 +43,7 @@ describe Flickr::Photosets do
       photos = @photoset.get_photos
       
       photos.should_not be_nil
-      photos[0].should be_an_instance_of(Flickr::Photos::Photo)      
+      photos[0].should be_an_instance_of(Flickr::Photos::Photo)    
     end
   end
 end

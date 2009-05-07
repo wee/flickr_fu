@@ -24,11 +24,12 @@ class Flickr::Photosets < Flickr::Base
     end
   
     def create_attributes(photoset)
+
       {
         :id => photoset[:id], 
         :num_photos => photoset[:photos],
-        :title => photoset[:title],
-        :description => photoset[:description]
+        :title => photoset.title,
+        :description => photoset.description
        }
     end
   

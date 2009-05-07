@@ -9,7 +9,7 @@ class Flickr::Photosets::Photoset
   end
   
   def get_photos(options={})
-    options.merge(:photoset_id=>id)
+    options = options.merge(:photoset_id=>id)
     rsp = @flickr.send_request('flickr.photosets.getPhotos', options)
     collect_photos(rsp)
   end
