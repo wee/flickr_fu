@@ -148,7 +148,7 @@ class Flickr::Photos < Flickr::Base
   # * media (Optional)
   #     The type of media to search for. 'photo', 'video', or 'both' are allowed arguments, with 'both' being the default.
   # 
-  def get_recent(options)
+  def get_recent(options = {})
     options.merge!({:extras => "license,date_upload,date_taken,owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,o_dims,views,media"})
 
     rsp = @flickr.send_request('flickr.photos.getRecent', options)
