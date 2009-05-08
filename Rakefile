@@ -1,6 +1,30 @@
 require 'rake'
 require 'rake/rdoctask'
- 
+
+# Gem building
+begin
+  begin
+    require 'jeweler'
+  rescue LoadError
+    require 'rubygems'
+    require 'jeweler'
+  end
+  Jeweler::Tasks.new do |s|
+    s.name = "flickr_fu"
+    s.summary = "Provides a ruby interface to flickr via the REST api"
+    s.email = "ben@commonthread.com"
+    s.homepage = "http://github.com/commonthread/flickr_fu"
+    s.description = "Provides a ruby interface to flickr via the REST api"
+    s.authors = ["Ben Wyrosdick", "Maciej Bilas"]
+    s.rdoc_options = ["--main", "README"]
+    s.extra_rdoc_files = ["README"]
+    s.add_dependency("mime-types", ["> 0.0.0"])
+    s.add_dependency("xml-magic", ["> 0.0.0"])
+  end
+rescue LoadError
+  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+end
+
 desc 'Generate documentation for flickr_fu.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
