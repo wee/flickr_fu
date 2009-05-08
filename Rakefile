@@ -29,14 +29,20 @@ end
 
 task :default => :spec
 
-desc "Run the specs under spec/models"
-Spec::Rake::SpecTask.new do |t|
+spec_common = Proc.new do |t|
   t.spec_opts = ['--options', "spec/spec.opts"]
   t.spec_opts << ['--options', "spec/spec.local.opts" ] if File.exist?(File.dirname(__FILE__) + "/spec/spec.local.opts")
   t.spec_files = FileList['spec/**/*_spec.rb']
 end
 
-desc "Run rcov"
-task :rcov do
-  system "rcov spec/**/*.rb -x /var/lib -x spec/"
+desc "Run the specs under spec/models"
+Spec::Rake::SpecTask.new do |t|
+  spec_common.call(t)
+end
+
+desc "Analyze code coverage with tests"
+Spec::Rake::SpecTask.new("rcov") do |t|
+  spec_common.call(t)
+  t.rcov = true
+  t.rcov_opts = ["-x", "/var/lib", "-x", "spec/", "-T"]
 end
