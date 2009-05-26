@@ -31,6 +31,7 @@ class Flickr::Photosets::Photoset
       {:id => photo[:id],
        :secret => photo[:secret], 
        :server => photo[:server], 
+       :farm => photo[:farm],
        :title => photo[:title]}
     end
 end
