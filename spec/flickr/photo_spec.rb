@@ -38,7 +38,24 @@ describe Flickr::Photos::Photo do
         "The last picture from a quite old event. The demolition of the best known hotel in Rzeszów called Hotel Rzeszów."
     end
   end
-  
+
+  describe ".photo_size" do
+    it "should return the appropriate Flickr::Photos::Size instance when requested by symbol" do
+	  @photo.photo_size(:square).class.should == Flickr::Photos::Size
+	  @photo.photo_size(:square).label.should == "Square"
+    end
+
+    it "should return the appropriate Flickr::Photos::Size instance when requested by string" do
+	  @photo.photo_size('square').class.should == Flickr::Photos::Size
+	  @photo.photo_size('square').label.should == "Square"
+    end
+
+    it "should return the :medium Flickr::Photos::Size instance invalidly requested" do
+	  @photo.photo_size(:doubleplusbig).class.should == Flickr::Photos::Size
+	  @photo.photo_size(:doubleplusbig).label.should == "Medium"
+    end
+  end
+
   describe ".image_url" do
     it "should return all standard sizes (thumbnail, square, small, medium and large) when requested" do
 	  @photo.image_url(:square).should == "http://farm4.static.flickr.com/3180/2984637736_9e5762e027_s.jpg"
