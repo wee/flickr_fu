@@ -24,6 +24,24 @@ class Flickr::Photos::Photo
     image_url(size)
   end
 
+  # returns an instance of Flickr::Photos::Size for the required size
+  #
+  # Params
+  #  * size (Optional)
+  #    the size of the size instance to return.  Optional sizes are:
+  #       :square - square 75x75
+  #       :thumbnail - 100 on longest side
+  #       :small - 240 on longest side
+  #       :medium - 500 on longest side
+  #       :large - 1024 on longest side (only exists for very large original images)
+  #       :original - original image, either a jpg, gif or png, depending on source format
+  # Examples
+  #       Photo.photo_size(:square).source
+  #       Photo.photo_size(:large).width
+  def photo_size(size = :medium)
+    size_hash.fetch(size.to_s, size_hash['medium'])
+  end
+
   # retreive the url to the image stored on flickr
   #
   # == Params
