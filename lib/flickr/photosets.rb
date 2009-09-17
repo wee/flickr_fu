@@ -10,6 +10,14 @@ class Flickr::Photosets < Flickr::Base
     collect_photosets(rsp)
   end
     
+  def order_by!(field, order = :asc)
+    ordered_list = get_list.sort { |a,b| (a.send(field) || "") <=> (b.send(field) || "") }
+    ordered_list = ordered_list.reverse unless order == :asc
+    
+    ordered_ids = ordered_list.map { |set| set.id }.join(',')
+    @flickr.send_request('flickr.photosets.orderSets', { :photoset_ids => ordered_ids }, :post)
+  end
+  
   protected  
     def collect_photosets(rsp)
       photosets = []

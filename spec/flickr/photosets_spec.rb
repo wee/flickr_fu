@@ -27,7 +27,7 @@ describe Flickr::Photosets do
       photosets[0].title.should == 'Test'
     end
   end
-  
+    
   describe ".get_photos" do
     before :each do
       @photoset = Flickr::Photosets::Photoset.new(@flickr,{:id=>4})
@@ -46,4 +46,35 @@ describe Flickr::Photosets do
       photos[0].should be_an_instance_of(Flickr::Photos::Photo)    
     end
   end
+
+  describe ".order_by!" do
+    before :each do
+      photoset1 = stub(:id => '1', :title => 'Title 1')
+      photoset2 = stub(:id => '2', :title => 'Title 2')
+      @flickr.photosets.stub!(:get_list).and_return([ photoset1, photoset2 ])  
+    end
+  
+    it "should call flickr.photosets.orderSets with the order by title descending" do
+      @flickr.should_receive(:send_request).with("flickr.photosets.orderSets", 
+        { :photoset_ids => "2,1" }, :post)
+        
+      @flickr.photosets.order_by!(:title, :desc)
+    end
+    
+    it "should call flickr.photosets.orderSets with the order by title ascending" do
+      @flickr.should_receive(:send_request).with("flickr.photosets.orderSets", 
+        { :photoset_ids => "1,2" }, :post)
+  
+      @flickr.photosets.order_by!(:title, :asc)
+    end
+    
+    it "should call flickr.photosets.orderSets with the default ascending order by title" do
+      @flickr.should_receive(:send_request).with("flickr.photosets.orderSets", 
+        { :photoset_ids => "1,2" }, :post)
+  
+      @flickr.photosets.order_by!(:title)
+    end
+    
+  end
+
 end
